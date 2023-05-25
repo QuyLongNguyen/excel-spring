@@ -7,12 +7,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ImportSheetError {
+public class ImportError {
 
-    private String sheetName;
+    private String sheet;
 
-    private String cellAddress;
+    private String address;
 
-    private String description;
+    private String detail;
 
 }

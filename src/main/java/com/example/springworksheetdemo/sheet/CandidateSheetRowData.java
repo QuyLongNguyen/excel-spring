@@ -4,7 +4,7 @@ import com.example.springworksheetdemo.enums.Gender;
 
 import java.time.LocalDate;
 
-public enum CandidateSheetCell implements DataRowSheet{
+public enum CandidateSheetRowData implements SheetRowData {
 
     FIRST_NAME("First Name", 1, "A", true, "firstName", String.class),
     LAST_NAME("Last Name", 2, "B",false, "lastName", String.class),
@@ -15,13 +15,14 @@ public enum CandidateSheetCell implements DataRowSheet{
 
     private String cellName;
     private int columnIndex;
-
     private String columnCharacter;
     private boolean isRequired;
     private String fieldName;
     private Class fieldType;
 
-    CandidateSheetCell(String cellName, int columnIndex, String columnCharacter, boolean isRequired, String fieldName, Class fieldType){
+    public static final String SHEET_NAME = "Candidate";
+
+    CandidateSheetRowData(String cellName, int columnIndex, String columnCharacter, boolean isRequired, String fieldName, Class fieldType){
         this.cellName = cellName;
         this.columnIndex = columnIndex;
         this.columnCharacter = columnCharacter;

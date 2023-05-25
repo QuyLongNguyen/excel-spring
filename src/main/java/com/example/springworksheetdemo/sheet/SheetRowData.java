@@ -1,6 +1,6 @@
 package com.example.springworksheetdemo.sheet;
 
-public interface DataRowSheet {
+public interface SheetRowData {
 
     String getCellName();
     int getColumnIndex();
@@ -12,5 +12,7 @@ public interface DataRowSheet {
     boolean isRequired();
 
     Class getFieldType();
+
+
 
 }

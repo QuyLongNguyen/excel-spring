@@ -25,7 +25,7 @@ public class ImportSheetControllerTest {
         this.mockMvc
                 .perform(multipart("file")
                         .file(new MockMultipartFile("candidate-correct.xlsx",
-                                new ClassPathResource("datatest/candidate-correct.xlsx").getInputStream())))
+                                new ClassPathResource("files/candidate-correct.xlsx").getInputStream())))
                 .andExpect(flash().attribute("message", "Upload success"));
 
     }
