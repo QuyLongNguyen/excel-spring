@@ -8,4 +8,6 @@ import java.util.List;
 public interface CandidateService {
 
     Iterable<Candidate> saveAll(List<CandidateDTO> candidates);
+
+    List<CandidateDTO> findAll();
 }

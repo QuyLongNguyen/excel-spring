@@ -2,8 +2,7 @@ package com.example.springworksheetdemo.service.impl;
 
 import com.example.springworksheetdemo.dto.ImportError;
 import com.example.springworksheetdemo.dto.ImportResult;
-import com.example.springworksheetdemo.entities.Candidate;
-import com.example.springworksheetdemo.service.ImportSheetService;
+import com.example.springworksheetdemo.service.SheetService;
 import com.example.springworksheetdemo.sheet.SheetRowData;
 import com.example.springworksheetdemo.utils.WorkbookUtils;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,14 +12,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class ImportSheetServiceImpl implements ImportSheetService {
+public class SheetServiceImpl implements SheetService {
 
     @Override
     public <T, R extends SheetRowData> ImportResult<T> importFile(MultipartFile multipartFile, String sheetName, Class<R> sheetRowData, Class<T> objectType) throws IOException {
@@ -28,8 +28,6 @@ public class ImportSheetServiceImpl implements ImportSheetService {
             XSSFSheet sheet = workbook.getSheet(sheetName);
             List<ImportError> errors = new LinkedList<>();
             List<T> importData = new LinkedList<>();
-
-
 
             for (Row row : sheet) {
                 if (row.getRowNum() < 1) {
@@ -81,6 +79,38 @@ public class ImportSheetServiceImpl implements ImportSheetService {
             return new ImportResult<>("Upload failed", errors, Collections.emptyList());
         }
 
+    }
+
+    @Override
+    public <T, E extends SheetRowData> ByteArrayInputStream exportFile(InputStream inputStream,
+                                                                       String sheetName,
+                                                                       Class<E> sheetRowData,
+                                                                       Iterable<T> data) throws IOException {
+
+        try (XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            XSSFSheet sheet = workbook.getSheet(sheetName);
+            int rowIdx = 1;
+            for (T row: data){
+                for (SheetRowData cell : sheetRowData.getEnumConstants()) {
+                    Field field;
+                    Object value;
+
+                    try {
+                        field = row.getClass().getDeclaredField(cell.getFieldName());
+                        field.setAccessible(true);
+                        value = field.get(row);
+                    }catch (NoSuchFieldException | IllegalAccessException e){
+                        e.printStackTrace();
+                        continue;
+                    }
+                    WorkbookUtils.setValueAt(sheet, rowIdx, cell.getColumnIndex(), cell.getFieldType(), value);
+                }
+                rowIdx++;
+            }
+            workbook.write(byteArrayOutputStream);
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
     }
 
     private boolean isValidateCell(List<ImportError> importErrors, Sheet sheet, SheetRowData cell, int rowIndex, int columnIndex) {

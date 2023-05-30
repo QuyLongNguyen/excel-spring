@@ -4,12 +4,20 @@ import com.example.springworksheetdemo.dto.ImportResult;
 import com.example.springworksheetdemo.sheet.SheetRowData;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
-public interface ImportSheetService {
+public interface SheetService {
 
     <T,E extends SheetRowData> ImportResult importFile(MultipartFile multipartFile,
                                                        String sheetName,
                                                        Class<E> sheetRowData,
                                                        Class<T> objectType) throws IOException;
+
+    <T, E extends SheetRowData> ByteArrayInputStream exportFile(InputStream inputStream,
+                                                                String sheetName,
+                                                                Class<E> sheetRowData,
+                                                                Iterable<T> data) throws IOException;
 }

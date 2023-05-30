@@ -1,11 +1,14 @@
 package com.example.springworksheetdemo.utils;
 
+import com.example.springworksheetdemo.sheet.SheetRowData;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 
 public class WorkbookUtils {
 
@@ -30,7 +33,6 @@ public class WorkbookUtils {
                 }
             }
         }
-
         switch (classType.getSimpleName()) {
             case "Integer":
                 return (T) Integer.valueOf((int) cell.getNumericCellValue());
@@ -45,6 +47,33 @@ public class WorkbookUtils {
                         .toLocalDate();
         }
         return null;
+    }
+
+    public static <T> void setValueAt(Sheet sheet, int rowIndex, int columnIndex, Class<T> classType, Object value){
+        Row row = sheet.getRow(rowIndex - 1);
+        if (row == null) {
+            row = sheet.createRow(rowIndex - 1) ;
+        }
+        Cell cell = row.getCell(columnIndex - 1);
+        if (cell == null) {
+            cell = row.createCell(columnIndex - 1) ;
+        }
+        switch (classType.getSimpleName()) {
+            case "Integer":
+                cell.setCellValue((int)value);
+                break;
+            case "Double":
+                cell.setCellValue((double) value);
+                break;
+            case "String":
+                cell.setCellValue((String) value);
+                break;
+            case "LocalDate":
+                cell.setCellValue((LocalDate) value);
+                break;
+        }
+
+
     }
 
     public static boolean isEmptyCell(Sheet sheet, int rowIndex, int columnIndex) {

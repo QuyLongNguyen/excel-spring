@@ -29,5 +29,13 @@ public class CandidateServiceImpl implements CandidateService {
                 .collect(Collectors.toList()));
     }
 
+    @Override
+    public List<CandidateDTO> findAll() {
+        return candidateRepository.findAll()
+                .stream()
+                .map(candidate -> candidateMapper.toDTO(candidate))
+                .collect(Collectors.toList());
+    }
+
 
 }
